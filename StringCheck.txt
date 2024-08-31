@@ -1,0 +1,80 @@
+section .bss
+    str1 resb 100              ; Reserve 100 bytes for the first string
+    str2 resb 100              ; Reserve 100 bytes for the second string
+
+section .data
+    msg_prompt1 db 'Enter the first string: ', 0
+    msg_prompt2 db 'Enter the second string: ', 0
+    msg_equal db 'Strings are equal!', 0xa, 0
+    msg_not_equal db 'Strings are not equal!', 0xa, 0
+
+section .text
+    global _start
+
+_start:
+    ; Print prompt for the first string
+    mov eax, 4                 ; syscall: sys_write
+    mov ebx, 1                 ; file descriptor: stdout
+    mov ecx, msg_prompt1       ; message to write
+    mov edx, 24                ; length of the message
+    int 0x80                   ; call kernel
+
+    ; Read the first string from user input
+    mov eax, 3                 ; syscall: sys_read
+    mov ebx, 0                 ; file descriptor: stdin
+    mov ecx, str1              ; buffer to store input
+    mov edx, 100               ; max length to read
+    int 0x80                   ; call kernel
+    dec eax                    ; eax now has the length of input, adjust for indexing
+    mov byte [str1 + eax], 0   ; Add null terminator to the end of the first string
+
+    ; Print prompt for the second string
+    mov eax, 4                 ; syscall: sys_write
+    mov ebx, 1                 ; file descriptor: stdout
+    mov ecx, msg_prompt2       ; message to write
+    mov edx, 25                ; length of the message
+    int 0x80                   ; call kernel
+
+    ; Read the second string from user input
+    mov eax, 3                 ; syscall: sys_read
+    mov ebx, 0                 ; file descriptor: stdin
+    mov ecx, str2              ; buffer to store input
+    mov edx, 100               ; max length to read
+    int 0x80                   ; call kernel
+    dec eax                    ; eax now has the length of input, adjust for indexing
+    mov byte [str2 + eax], 0   ; Add null terminator to the end of the second string
+
+    ; Set up pointers for comparing strings
+    mov esi, str1
+    mov edi, str2
+
+compare_loop:
+    mov al, [esi]              ; Load a byte from the first string
+    mov dl, [edi]              ; Load a byte from the second string
+    cmp al, dl                 ; Compare the bytes
+    jne strings_not_equal      ; If not equal, jump to not equal message
+    test al, al                ; Check if end of string (null terminator)
+    jz strings_equal           ; If zero, strings are equal
+    inc esi                    ; Move to the next character in first string
+    inc edi                    ; Move to the next character in second string
+    jmp compare_loop           ; Repeat the loop
+
+strings_not_equal:
+    mov eax, 4                 ; syscall: sys_write
+    mov ebx, 1                 ; file descriptor: stdout
+    mov ecx, msg_not_equal     ; message to write
+    mov edx, 22                ; length of the message
+    int 0x80                   ; call kernel
+    jmp exit                   ; Exit the program
+
+strings_equal:
+    mov eax, 4                 ; syscall: sys_write
+    mov ebx, 1                 ; file descriptor: stdout
+    mov ecx, msg_equal         ; message to write
+    mov edx, 18                ; length of the message
+    int 0x80                   ; call kernel
+
+exit:
+    mov eax, 1                 ; syscall: sys_exit
+    xor ebx, ebx               ; return code 0
+    int 0x80                   ; call kernel

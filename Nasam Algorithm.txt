@@ -1,0 +1,182 @@
+5: check string Algorithm.
+
+       BEGIN
+    DISPLAY "Enter the first string: "
+    READ str1
+    SET null terminator at end of str1
+    
+    DISPLAY "Enter the second string: "
+    READ str2
+    SET null terminator at end of str2
+    
+    SET ESI = address of str1
+    SET EDI = address of str2
+
+    WHILE TRUE
+        IF character at ESI != character at EDI THEN
+            DISPLAY "Strings are not equal!"
+            EXIT PROGRAM
+        ENDIF
+        
+        IF character at ESI or EDI is null terminator THEN
+            DISPLAY "Strings are equal!"
+            EXIT PROGRAM
+        ENDIF
+
+        INCREMENT ESI
+        INCREMENT EDI
+    ENDWHILE
+END
+
+
+
+4: Toggle String:
+
+BEGIN
+    DISPLAY "Enter a string: "
+    READ input_str
+    SET null terminator at the end of input_str
+
+    SET ESI = address of input_str (source)
+    SET EDI = address of result_str (destination)
+
+    WHILE TRUE
+        FETCH character at ESI
+        IF character is null terminator THEN
+            BREAK loop
+        ENDIF
+
+        IF character is between 'a' and 'z' THEN
+            CONVERT to uppercase by subtracting 32
+        ELSE IF character is between 'A' and 'Z' THEN
+            CONVERT to lowercase by adding 32
+        ENDIF
+
+        STORE the character at EDI
+        INCREMENT ESI and EDI
+    ENDWHILE
+
+    SET null terminator at end of result_str
+
+    DISPLAY "Toggled string: "
+    DISPLAY result_str
+    EXIT PROGRAM
+END
+
+
+3: Concatenate Strings
+
+BEGIN
+    DISPLAY "Enter the first string: "
+    READ str1
+    SET null terminator at the end of str1
+
+    DISPLAY "Enter the second string: "
+    READ str2
+    SET null terminator at the end of str2
+
+    SET ESI = address of str1 (source for first string)
+    SET EDI = address of result (destination for concatenated string)
+
+    LOOP to copy str1 to result:
+        FETCH character from str1 at ESI
+        STORE character in result at EDI
+        IF character is null terminator THEN
+            BREAK loop
+        ELSE
+            INCREMENT ESI and EDI
+        ENDIF
+    ENDLOOP
+
+    SET ESI = address of str2 (source for second string)
+
+    LOOP to copy str2 to result:
+        FETCH character from str2 at ESI
+        STORE character in result at EDI
+        IF character is null terminator THEN
+            BREAK loop
+        ELSE
+            INCREMENT ESI and EDI
+        ENDIF
+    ENDLOOP
+
+    DISPLAY "Concatenated string: "
+    DISPLAY result
+
+    EXIT PROGRAM
+END
+
+
+2: Equal String
+
+Prompt for First String:
+
+Display the message "Enter the first string:" to the user.
+Read the first string input from the user and store it in str1.
+Null-terminate the input string.
+Prompt for Second String:
+
+Display the message "Enter the second string:" to the user.
+Read the second string input from the user and store it in str2.
+Null-terminate the input string.
+Initialize Pointers for String Comparison:
+
+Set the pointer ESI to the start of the first string (str1).
+Set the pointer EDI to the start of the second string (str2).
+Compare Strings Character by Character:
+
+Start a loop to compare each character of str1 and str2:
+Load a character from str1 (pointed by ESI) into the register AL.
+Load a character from str2 (pointed by EDI) into the register DL.
+Compare the characters in AL and DL.
+If the characters are different (jne), go to Step 6.
+If both characters are null terminators (jz), go to Step 7.
+Increment both pointers ESI and EDI to move to the next character.
+Repeat the loop.
+Strings Are Not Equal:
+
+If any character differs between str1 and str2:
+Display the message "Strings are not equal!" to the user.
+Go to Step 8.
+Strings Are Equal:
+
+If the end of both strings is reached without finding any difference:
+Display the message "Strings are equal!" to the user.
+Exit Program:
+
+Exit the program gracefully using the sys_exit system call.
+
+
+1: String reverser:
+
+Algorithm
+Prompt the User for Input:
+
+Print "Enter a string:" to the user.
+Read the input string from the user and store it in input_str.
+Null-terminate the input string.
+Find the Length of the Input String:
+
+Initialize a counter (ECX) to 0.
+Iterate through input_str until the null terminator is found, incrementing the counter for each character.
+The counter will hold the length of the input string.
+Reverse the String:
+
+Decrement the length counter (ECX) by 1 to point to the last character.
+Copy the length counter to another register (EBX).
+Loop backward through input_str, starting from the last character:
+Load the character into register AL.
+Store it in reversed_str.
+Decrement EBX to move to the previous character in input_str.
+Increment EDI to move to the next position in reversed_str.
+Repeat until the beginning of input_str is reached.
+Null-Terminate the Reversed String:
+
+After the loop, add a null terminator to reversed_str.
+Display the Reversed String:
+
+Print "Reversed string:" to the user.
+Print the reversed_str to the user.
+Exit the Program:
+
+Use the sys_exit system call to exit the program.
